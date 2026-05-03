@@ -46,6 +46,11 @@ def run_macro_processor(code: str, mode: str):
             if not macro_name:
                 macro_name = parts[0]
 
+                if macro_name in macro_table:
+                    errors.append(f"Duplicate macro name: {macro_name}")
+                    in_macro = False
+                    continue
+
                 mnt.append({"index": mnt_index, "name": macro_name})
                 mnt_index += 1
 
@@ -58,6 +63,12 @@ def run_macro_processor(code: str, mode: str):
                 mdt_index += 1
 
                 current_macro_lines.append(line)
+
+    if in_macro:
+        if macro_name:
+            errors.append(f"Missing MEND for macro: {macro_name}")
+        else:
+            errors.append("Missing MEND and macro name not defined")
 
     # PASS 2
     if mode in ["pass2", "full"]:

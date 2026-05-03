@@ -9,15 +9,21 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const handleRun = async () => {
-    if (!code.trim()) {
-      alert("Please enter macro code");
-      return;
-    }
+  console.log("RUN CLICKED"); // 👈 debug
 
-    setLoading(true);
-    const data = await runMacroProcessor(code, mode);
-    setResult(data);
-    setLoading(false);
+  if (!code.trim()) {
+    alert("Please enter macro code");
+    return;
+  }
+
+  setLoading(true);
+
+  const data = await runMacroProcessor(code, mode);
+
+  console.log("DATA RECEIVED:", data); // 👈 debug
+
+  setResult(data);
+  setLoading(false);
   };
 
   const handleClear = () => {
