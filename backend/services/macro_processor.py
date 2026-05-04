@@ -14,19 +14,15 @@ def run_macro_processor(code: str, mode: str):
     expanded_code = []
     errors = []
 
-    VALID_KEYWORDS = {"MACRO", "MEND", "SET", "ADD", "PRINT"}
+    VALID_KEYWORDS = {"MACRO", "MEND", "SET", "ADD", "PRINT", "START", "END"}
 
-    # PASS 1 (always)
+    # PASS 1
     for line in lines:
         if not line:
             continue
 
         parts = line.split()
         keyword = parts[0]
-
-        if keyword not in VALID_KEYWORDS and not in_macro:
-            errors.append(f"Invalid keyword: {keyword}")
-            continue
 
         if line == "MACRO":
             in_macro = True
@@ -64,6 +60,12 @@ def run_macro_processor(code: str, mode: str):
 
                 current_macro_lines.append(line)
 
+        else:
+            # ✅ FIX: allow macros + START/END
+            if keyword not in VALID_KEYWORDS and keyword not in macro_table:
+                errors.append(f"Invalid keyword: {keyword}")
+
+    # Missing MEND check
     if in_macro:
         if macro_name:
             errors.append(f"Missing MEND for macro: {macro_name}")
@@ -92,15 +94,26 @@ def run_macro_processor(code: str, mode: str):
             parts = line.split()
             word = parts[0]
 
+            # Allow START & END
+            if word in ["START", "END"]:
+                expanded_code.append(line)
+                continue
+
+            # Macro expansion
             if word in macro_table:
                 args = parts[1:]
 
-                for m_line in macro_table[word]:
-                    expanded = m_line
-                    for i, arg in enumerate(args):
-                        expanded = expanded.replace(f"&ARG{i+1}", arg)
+                if len(args) == 0:
+                    errors.append(f"Missing argument for macro {word}")
+                    continue
 
+                for m_line in macro_table[word]:
+                    if m_line.startswith(word):
+                        continue
+
+                    expanded = m_line.replace("&A", args[0])
                     expanded_code.append(expanded)
+
             else:
                 expanded_code.append(line)
 
