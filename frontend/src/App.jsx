@@ -143,6 +143,38 @@ export default function App() {
             <pre className="bg-[#0b1220] p-3 rounded-lg border border-gray-800 text-cyan-200 overflow-x-auto">
               {result.expandedCode || "N/A"}
             </pre>
+            <h3 className="text-sky-300 mt-4">ALA (Argument List Array)</h3>
+
+{result.ala && result.ala.length > 0 ? (
+  result.ala?.map((entry, idx) => (
+    <div key={idx} className="mt-3 border border-gray-700 rounded-lg p-3 bg-slate-900">
+      
+      <p className="text-yellow-400 font-semibold">
+        Macro Call {idx + 1}: {entry.macro}
+      </p>
+
+      <table className="w-full mt-2">
+        <thead>
+          <tr className="bg-gray-800 text-sky-400">
+            <th className="p-2 text-left">Parameter</th>
+            <th className="p-2 text-left">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entry.mapping.map((item, i) => (
+            <tr key={i} className="border-t border-gray-700">
+              <td className="p-2">{item.param}</td>
+              <td className="p-2">{item.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+    </div>
+  ))
+) : (
+  <p className="text-gray-400 mt-2">No ALA generated</p>
+)}
 
             <h3 className="text-sky-300 mt-4">Errors</h3>
             <pre className="bg-[#0b1220] p-3 rounded-lg border border-gray-800 text-cyan-200">
