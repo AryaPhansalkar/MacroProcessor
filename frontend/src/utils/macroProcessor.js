@@ -22,6 +22,7 @@ export const runMacroProcessor = async (code, mode) => {
       mdt: [],
       expandedCode: "",
       errors: ["Failed to connect to backend"],
+      ala: [] 
     };
   }
 };

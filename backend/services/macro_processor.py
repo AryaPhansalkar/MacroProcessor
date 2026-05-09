@@ -90,6 +90,7 @@ def run_macro_processor(code: str, mode: str):
     # PASS 2
     if mode in ["pass2", "full"]:
 
+        ala_list = []   
         is_macro = False
 
         for line in lines:
@@ -132,11 +133,29 @@ def run_macro_processor(code: str, mode: str):
                 # Formal parameters
                 formal_params = header_parts[1:]
 
-                # Parameter mapping
-                param_map = {}
+         
+                if len(args) != len(formal_params):
+                    errors.append(f"Incorrect number of arguments for macro {word}")
+                    continue
 
-                for i in range(min(len(formal_params), len(args))):
-                    param_map[formal_params[i]] = args[i]
+              
+                param_map = {}
+                ala = []
+
+                for i in range(len(formal_params)):
+                    param = formal_params[i]
+                    value = args[i]
+
+                    param_map[param] = value
+                    ala.append({
+                        "param": param,
+                        "value": value
+                    })
+
+                ala_list.append({
+                    "macro": word,
+                    "mapping": ala
+                })
 
                 # Expand macro body
                 for m_line in macro_table[word][1:]:
@@ -155,5 +174,6 @@ def run_macro_processor(code: str, mode: str):
         "mnt": mnt,
         "mdt": mdt,
         "expandedCode": "\n".join(expanded_code),
-        "errors": errors
+        "errors": errors,
+        "ala": ala_list if mode in ["pass2", "full"] else []
     }
